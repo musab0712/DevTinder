@@ -1,18 +1,24 @@
-const expess = require("express");
+const express = require("express");
 const connectDB = require("./config/db");
 const User = require("./models/user");
-const app = expess();
+const app = express();
 
-app.post("/getData", async (req, res) => {
-  const user = new User({
-    firstName: "Musab",
-    lastName: "Hassan",
-    emailId: "musab@gmail.com",
-    password: "musab@123",
-  });
+app.use(express.json());
 
+app.post("/signup", async (req, res) => {
+  const user = new User(req.body);
   await user.save();
-  res.send("Data Sava Successful");
+  res.send("Data Save Successful");
+});
+
+app.get("/getByEmail", async (req, res) => {
+  const user = await User.findOne({ emailId: req.body.emailId });
+  res.send(user);
+});
+
+app.get("/feed", async (req, res) => {
+  const user = await User.find({});
+  res.send(user);
 });
 
 connectDB()
