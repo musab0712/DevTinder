@@ -11,7 +11,7 @@ app.post("/signup", async (req, res) => {
   res.send("Data Save Successful");
 });
 
-app.get("/getByEmail", async (req, res) => {
+app.get("/user", async (req, res) => {
   const user = await User.findOne({ emailId: req.body.emailId });
   res.send(user);
 });
@@ -19,6 +19,17 @@ app.get("/getByEmail", async (req, res) => {
 app.get("/feed", async (req, res) => {
   const user = await User.find({});
   res.send(user);
+});
+
+app.delete("/user", async (req, res) => {
+  await User.findByIdAndDelete(req.body.userId);
+  res.send("User Deleted Succesfully");
+});
+
+app.patch("/user", async (req, res) => {
+  const data = req.body;
+  await User.findByIdAndUpdate(req.body.userId, data);
+  res.send("User Updated Succesfully");
 });
 
 connectDB()
