@@ -5,6 +5,7 @@ const signupValidater = require("./utils/signupValidater");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const { userAuth } = require("./middleware/auth");
 
 const app = express();
 
@@ -41,7 +42,7 @@ app.post("/signin", async (req, res) => {
     if (!isMatch) {
       return res.status(401).send("Invalid Credentials");
     }
-    jwt.sign({ emailId }, "devSecretKey", { expiresIn: "1d" }, (err, token) => {
+    jwt.sign({ emailId }, "devSecretKey", { expiresIn: "7d" }, (err, token) => {
       if (err) {
         return res.status(500).send("Error generating token");
       }
@@ -49,6 +50,15 @@ app.post("/signin", async (req, res) => {
       res.cookie("token", token, { httpOnly: true });
       res.send("Login Successful");
     });
+  } catch (err) {
+    res.status(400).send("ERROR: " + err.message);
+  }
+});
+
+app.get("/profile", userAuth, (req, res) => {
+  try {
+    const user = req.user;
+    res.send(user);
   } catch (err) {
     res.status(400).send("ERROR: " + err.message);
   }
